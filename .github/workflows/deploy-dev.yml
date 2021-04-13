@@ -1,0 +1,56 @@
+name: Deploy to dev environment
+
+on:
+  push:
+    branches:
+      - dev
+    paths-ignore:
+      - "docs/**"
+  workflow_dispatch:
+    region:
+      description: "AWS Region to deploy to"
+      required: true
+      default: "ap-northeast-1"
+    ProjectName:
+      description: "AWS Region to deploy to"
+      required: true
+      default: "test-project"
+
+jobs:
+  deploy:
+    name: Deploy to dev environment
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # set AWS credentials
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ github.event.inputs.region }}
+
+      # deploy
+      - name: Deploy with AWS CloudFormation
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: MyStack
+          template: ./deploy/stack.yaml
+          role-arn: arn:aws:iam::${{ steps.creds.outputs.aws-account-id }}:role/github-actions-cloudformation-stack-role
+          no-fail-on-empty-changeset: "1"
+          parameter-overrides: "MyParam1=myValue,MyParam2=${{ secrets.MY_SECRET_VALUE }}"
+
+      # notify to discord
+      - name: Notify to Discord
+        uses: sarisia/actions-status-discord@v1 # https://github.com/sarisia/actions-status-discord
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          username: GitHub Actions
+          status: ${{ job.status }}
+          nofail: false # when notification failed, this action failed, then workflow failed
