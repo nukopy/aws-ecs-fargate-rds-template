@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Stack for Metheus
+Parameters:
+  ProjectName:
+    Type: String
+    Description: Project name
+  Env:
+    Type: String
+    Description: Environment like "dev", "staging", "production"
+Resources:
+  # Network
+  MetheusVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: !Sub "${ProjectName}-${Env}-vpc"
+  MetheusPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref MetheusVPC
+      Tags:
+        - Key: Name
+          Value: FirstVPC-FrontendSubnet
+
+  # ECS Fargate
+
+  # RDS
+
+  # Congnite
+  # TODO: CloudFormation で構築した場合、Cognite の URL とかどうやって Fargate の環境変数として渡すんだろう？
+
+  # Load Balancer
+  # TODO: SSL 化必要？
