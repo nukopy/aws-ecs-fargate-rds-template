@@ -1,0 +1,173 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Stack for ETL task
+Parameters:
+  Prefix:
+    Type: String
+    Description: Prefix name of resources like "dev", "staging", "production"
+Resources:
+  ##############################
+  # IAM Role
+  ##############################
+
+  RoleLambdaEntryPoint:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Prefix}-role-lambda-entry-point"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  RoleLambdaFirehoseTransformation:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Prefix}-role-lambda-firehose-transformation"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  RoleLambdaS3AvroTransformation:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Prefix}-role-lambda-s3-avro-transformation"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  RoleSubscriptionFilter:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Prefix}-role-subscription-filter"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        # Version: "2008-10-17" これなんでバージョン違うん？
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: logs.ap-northeast-1.amazonaws.com
+            Action: sts:AssumeRole
+
+  RoleFirehoseDeliveryStream:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Prefix}-role-firehose-delivery-stream"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref "AWS::AccountId"
+
+  ##############################
+  # IAM Policy
+  ##############################
+
+  PolicyLambdaBasicExecution:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${Prefix}-policy-lambda-basic-execution"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"
+      Roles:
+        - !Ref RoleLambdaEntryPoint
+        - !Ref RoleLambdaFirehoseTransformation
+        - !Ref RoleLambdaS3AvroTransformation
+
+  PolicyS3FullAccess:
+    # https://console.aws.amazon.com/iam/home#/roles/firehose-to-s3
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${Prefix}-policy-s3-read-write"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "s3:*"
+            Resource: "*"
+      Roles:
+        - !Ref RoleLambdaS3AvroTransformation
+
+  PolicyFirehoseAccess:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${Prefix}-policy-lambda-basic-execution"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "firehose:*"
+            Resource: !Join
+              - ""
+              - - "arn:aws:firehose:"
+                - !Ref "AWS::Region"
+                - ":"
+                - !Ref "AWS::AccountId"
+                - ":*"
+      Roles:
+        - !Ref RoleSubscriptionFilter
+
+  PolicyLambdaAccess:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${Prefix}-policy-lambda-basic-execution"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+            Resource: "*"
+      Roles:
+        - !Ref RoleFirehoseDeliveryStream
+
+  PolicyFirehoseDeliveryStreamS3Access:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${Prefix}-policy-firehose-delivery-stream-s3-access"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:AbortMultipartUpload
+              - s3:GetBucketLocation
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:PutObject
+            Resource:
+              - !Join
+                - ""
+                - - "arn:aws:s3:::"
+                  - !Ref BucketLogging
+              - !Join
+                - ""
+                - - "arn:aws:s3:::"
+                  - !Ref BucketLogging
+                  - "*"
+      Roles:
+        - !Ref RoleSubscriptionFilter
+        - !Ref RoleFirehoseDeliveryStream
