@@ -6,20 +6,22 @@ You MUST set environment variables for deploying.
 
 ### Local Environment Variables
 
-These are used in the sections [Execute deploy commands with aws-cli](#execute-deploy-commands-with-aws-cli)
+Environment variables below are used in the sections [Deploy with AWS CLI](#deploy-with-aws-cli).
 
 ```sh
 # CloudFormation
-export PROFILE_NAME="test-metheus-cfn"  # aws-cli の profile
-export CFN_STACK_NAME="metheus-dev-cfn"
+export PROFILE_NAME="profile-name-for-aws-cli"  # aws-cli の profile
 export CFN_TEMPLATE="./templates/stack.yml"
 
 # CloudFormation params
-export ProjectName="metheus"
+export ProjectName="test-project"
 export ENV="dev"
+export CFN_STACK_NAME="${ProjectName}-${ENV}-cfn"
 ```
 
 ### GitHub repository Secrets
+
+Secrets below are used in the sections [Deploy with GitHub Actions](#deploy-with-github-actions)
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
@@ -35,7 +37,7 @@ In this repository, 2 ways are provided to deploy with AWS CloudFormation.
 - Execute deploy commands with aws-cli
 - Deploy via GitHub Actions
 
-### Execute deploy commands with aws-cli
+### Deploy with AWS CLI
 
 1. Create AWS account & Get AWS Access Key / Secret Access Key
 2. Setup aws-cli in local environment using keys obtained in step 1
@@ -44,7 +46,7 @@ In this repository, 2 ways are provided to deploy with AWS CloudFormation.
    1. Create registry
    2. TODO
 
-### Deploy via GitHub Actions
+### Deploy with GitHub Actions
 
 1. Create AWS account & Get AWS Access Key / Secret Access Key
 2. Set GitHub secrets for GitHub Actions mentioned in the section [GitHub repository Secrets](#github-repository-secrets)
