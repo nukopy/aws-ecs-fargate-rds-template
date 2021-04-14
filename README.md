@@ -1,4 +1,4 @@
-# aws-alb-vpc-ecs-fargate-rds
+# AWS ECS Fargate, RDS Template
 
 ## Set Environment Variables
 
