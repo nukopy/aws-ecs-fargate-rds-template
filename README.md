@@ -6,7 +6,7 @@ You MUST set environment variables or GitHub repository Secrets to deploy app.
 
 ### Local Environment Variables
 
-Environment variables below are used in the sections [Deploy with AWS CLI](#deploy-with-aws-cli).
+Environment variables below are used in the section [Deploy with AWS CLI](#deploy-with-aws-cli).
 
 ```sh
 # CloudFormation
@@ -21,7 +21,7 @@ export CFN_STACK_NAME="${ProjectName}-${ENV}-cfn"
 
 ### GitHub repository Secrets
 
-Secrets below are used in the sections [Deploy with GitHub Actions](#deploy-with-github-actions)
+Secrets below are used in the section [Deploy with GitHub Actions](#deploy-with-github-actions)
 
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
@@ -64,8 +64,8 @@ Please follow the steps below:
 
 You MUST create 2 `.env` files to run containers for app.
 
-- `./app/.env`
-  - the file format is in `./app/.env.sample`)
+- `app/.env`
+  - file sample: [`app/.env.sample`](https://github.com/nukopy/aws-ecs-fargate-rds-template/blob/develop/app/.env.sample)
 
 ```sh
 DB_USER="myuser"
@@ -77,8 +77,8 @@ SQLALCHEMY_TRACK_MODIFICATIONS=""  # false を表す
 SQLALCHEMY_ECHO=""  # false を表す
 ```
 
-- `./db/.env`
-  - the file format is in `./db/.env.sample`)
+- `db/.env`
+  - file sample: [`db/.env.sample`](https://github.com/nukopy/aws-ecs-fargate-rds-template/blob/develop/db/.env.sample)
 
 ```sh
 MYSQL_DATABASE="mydb"
