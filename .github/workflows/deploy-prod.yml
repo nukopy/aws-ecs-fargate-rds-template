@@ -6,15 +6,15 @@ on:
       - master
     paths-ignore:
       - "docs/**"
-  workflow_dispatch:
-    region:
-      description: "AWS Region to deploy to"
-      required: true
-      default: "ap-northeast-1"
-    ProjectName:
-      description: "AWS Region to deploy to"
-      required: true
-      default: "test-project"
+  # workflow_dispatch:
+  #   region:
+  #     description: "AWS Region to deploy to"
+  #     required: true
+  #     default: "ap-northeast-1"
+  #   ProjectName:
+  #     description: "AWS Region to deploy to"
+  #     required: true
+  #     default: "test-project"
 
 jobs:
   deploy:
@@ -32,7 +32,7 @@ jobs:
         uses: sarisia/actions-status-discord@v1 # https://github.com/sarisia/actions-status-discord
         if: always()
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
           username: GitHub Actions
           status: ${{ job.status }}
           nofail: false # when notification failed, this action failed, then workflow failed
