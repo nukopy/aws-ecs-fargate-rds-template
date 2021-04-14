@@ -1,8 +1,8 @@
 # AWS ECS Fargate, RDS Template
 
-## Set Environment Variables
+## Set Environment Variables / Secrets
 
-You MUST set environment variables for deploying.
+You MUST set environment variables or GitHub repository Secrets to deploy app.
 
 ### Local Environment Variables
 
@@ -34,8 +34,8 @@ Secrets below are used in the sections [Deploy with GitHub Actions](#deploy-with
 
 In this repository, 2 ways are provided to deploy with AWS CloudFormation.
 
-- Execute deploy commands with aws-cli
-- Deploy via GitHub Actions
+- Deploy with AWS CLI
+- Deploy with GitHub Actions
 
 ### Deploy with AWS CLI
 
@@ -51,9 +51,14 @@ In this repository, 2 ways are provided to deploy with AWS CloudFormation.
 1. Create AWS account & Get AWS Access Key / Secret Access Key
 2. Set GitHub secrets for GitHub Actions mentioned in the section [GitHub repository Secrets](#github-repository-secrets)
 
-## Execute App in local with Docker Compose
+## Run App in local with Docker Compose
 
-Run sample app in local with Docker Compose.
+Run sample app in local environment with Docker Compose.
+
+Please follow the steps below:
+
+1. Create `.env`
+2. Run containers with Docker Compose
 
 ### Create `.env`
 
@@ -82,7 +87,7 @@ MYSQL_PASSWORD="mypass"
 MYSQL_ROOT_PASSWORD="password"
 ```
 
-### Run containers
+### Run containers with Docker Compose
 
 - Run containers
   - access to http://localhost:8000/healthcheck in your browser for checking whether API server is running
