@@ -1,16 +1,12 @@
 name: Formatting & Testing
 
 on:
-  push:
-    branches:
-      - dev
-      - master
   pull_request:
     branches:
       - master
-      - dev
+      - develop
     paths-ignore:
-      - "docs/**"
+      - "notes/**"
   workflow_dispatch:
 
 jobs:

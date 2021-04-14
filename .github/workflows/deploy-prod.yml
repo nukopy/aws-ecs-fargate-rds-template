@@ -3,9 +3,11 @@ name: Deploy to production environment
 on:
   push:
     branches:
-      - master
+      # - master
+      #TODO 一時的にワークフローを動かさないように main に設定しているだけ
+      - main
     paths-ignore:
-      - "docs/**"
+      - "notes/**"
   # workflow_dispatch:
   #   region:
   #     description: "AWS Region to deploy to"
