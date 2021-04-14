@@ -79,6 +79,9 @@ jobs:
       #     token: ${{ secrets.CODECOV_TOKEN }}
       #     fail_ci_if_error: true
 
+      # validate CloudFormation template
+      # TODO: CloudFormation のテンプレートのバリデーションを行う処理を書く
+
       # notify to Discord
       - name: Notify to Discord
         uses: sarisia/actions-status-discord@v1 # https://github.com/sarisia/actions-status-discord
