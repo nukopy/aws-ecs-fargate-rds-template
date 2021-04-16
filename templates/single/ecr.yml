@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create ECR
+Parameters:
+  ProjectName:
+    Type: String
+    Description: Project name
+  Env:
+    Type: String
+    Description: Environment like "dev", "staging", "production"
+Resources:
+  TestAppECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub ${ProjectName}-${Env}-repository
+      ImageTagMutability: MUTABLE # 同じタグのイメージを push した場合、上書きをできるようにする
+      ImageScanningConfiguration: # push 時にイメージのスキャンで脆弱性を検知する
+        ScanOnPush: "true"
