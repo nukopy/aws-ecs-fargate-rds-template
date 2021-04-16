@@ -15,7 +15,7 @@ export CFN_TEMPLATE="./templates/stack.yml"
 
 # CloudFormation params
 export ProjectName="test-project"
-export ENV="dev"
+export Env="dev"
 export CFN_STACK_NAME="${ProjectName}-${ENV}-cfn"
 ```
 
