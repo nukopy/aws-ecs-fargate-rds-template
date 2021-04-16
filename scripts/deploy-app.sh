@@ -28,4 +28,4 @@ aws cloudformation deploy ${CHANGESET_OPTION} \
   --profile "${PROFILE_NAME}" \
   --parameter-overrides \
     ProjectName="${ProjectName}" \
-    Env="${ENV}"
+    Env="${Env}"
